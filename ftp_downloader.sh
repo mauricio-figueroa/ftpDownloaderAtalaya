@@ -20,15 +20,26 @@ else
      file="listado_ftp_externo.dat"
       while IFS= read -r line
       do
-        echo $line
-    #    if grep -q $line "$LISTADO_FTP_ATLAYA"; then
-          	#printf '%s' "$line"
-            printf '\n========================\n'
+      #  ZERO=ZERO
+        result=$(grep -c $line "listado_ftp_ATALAYA.dat")
+        #TODO EL RESULT EST MAL :s VERIFICAR
+        echo "$result"
+      if  [[ "$resutl" > 0 ]]
+          then
+            printf '\nYa existe el archivo\n'
+            printf '\n %s' "$line"
+        else
+          #	printf '\n %s' "$line"
+            printf '\nSe va a descargar archivo \n'
             curl $LINK_FTP_EXTERNO$line  --user worldpay:gj45Gxn7Df -o $line
-          #  curl -T   $line $LINK_FTP_ATALAYA --user test:test
-    #    fi
+            curl -T   $line $LINK_FTP_ATALAYA --user test:test
 
+        fi
 
       done <"$file"
+
+      rm -f "listado_ftp_externo.dat"
+      rm -f "listado_ftp_ATALAYA.dat"
+
 
 fi
