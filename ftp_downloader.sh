@@ -42,6 +42,8 @@ function parseValidArguments() {
 }
 
 function help() {
+  echo "#################"
+
   echo "Options you can use:"
   echo "  -h   | --help : this help"
   echo "  -fe  | --ftpexterno : external ftp link to connect"
@@ -54,13 +56,9 @@ function help() {
   echo "  -pif | --pathinternalftp: path internal ftp. Default value: $PATH_INTERNAL_FTP"
 
 
-  echo "############"
-  echo "No se toma ningun valor por default se deben ingrear todos los prametros para que el script funcione correctamente"
+  echo "#################"
   exit 1
 }
-
-
-
 
 
 ##############
