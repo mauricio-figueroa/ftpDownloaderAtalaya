@@ -93,31 +93,36 @@ function help() {
 ##############
 ## Main
 ##############
-  parseValidArguments $@
-  validateArguments
+parseValidArguments $@
+validateArguments
 
-  echo "###########"
-     LISTADO_FTP_EXTERNO=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll)
-     LISTADO_FTP_INTERNO=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP  --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll)
+echo "###########"
+LISTADO_FTP_EXTERNO=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll)
+LISTADO_FTP_INTERNO=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP  --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll)
 
-     echo "$LISTADO_FTP_EXTERNO" >> "$FILE_EXTERNAL_LIST"
-     echo "$LISTADO_FTP_INTERNO" >> "$FILE_INTERNAL_LIST"
+echo "$LISTADO_FTP_EXTERNO" >> "$FILE_EXTERNAL_LIST"
+echo "$LISTADO_FTP_INTERNO" >> "$FILE_INTERNAL_LIST"
 
 
-      while IFS= read -r line
-      do
-        result=$(grep -c $line "$FILE_INTERNAL_LIST")
-      if [ $result != "0" ]
-        then
-            echo "Ya existe el archivo: $line"
-        else
-            echo "Se va a descargar archivo: $line"
-            curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line
-            curl -T   $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP
-            rm -f $line
-        fi
+while IFS= read -r line
+do
+  result=$(grep -c $line "$FILE_INTERNAL_LIST")
 
-      done <"$FILE_EXTERNAL_LIST"
+  if [ $result != "0" ];then
+    echo "Ya existe el archivo: $line"
+  else
+    echo "Se va a descargar archivo: $line"
+    curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line
+    curl -T   $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP
+    rm -f $line
+  fi
 
-      rm -f "$FILE_EXTERNAL_LIST"
-      rm -f "$FILE_INTERNAL_LIST"
+done <"$FILE_EXTERNAL_LIST"
+
+rm -f "$FILE_EXTERNAL_LIST"
+rm -f "$FILE_INTERNAL_LIST"
+
+
+##############
+## End Main
+##############
