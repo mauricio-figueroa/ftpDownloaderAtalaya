@@ -1,10 +1,10 @@
 #!/bin/bash
-LINK_FTP_EXTERNO='ftp://sftp.despegar.com/upload/'
-LINK_FTP_INTERNO='ftp://10.254.22.99/'
-USER_FTP_EXTERNO=worldpay
-PASSWORD_FTP_EXTERNO=gj45Gxn7Df
-USER_FTP_INTERNO=test
-PASSWORD_FTP_INTERNO=test
+LINK_FTP_EXTERNO=
+LINK_FTP_INTERNO=
+USER_FTP_EXTERNO=
+PASSWORD_FTP_EXTERNO=
+USER_FTP_INTERNO=
+PASSWORD_FTP_INTERNO=
 PATH_EXTERNAL_FTP=''
 PATH_INTERNAL_FTP=''
 
@@ -38,19 +38,52 @@ function parseValidArguments() {
   done
 }
 
+function validateArguments(){
+  if [[ -z "$LINK_FTP_EXTERNO" ]]; then
+    echo "Link external ftp required ( Param: -fe or--ftpexterno)"
+    exit 1;
+  fi
+
+  if [[ -z "$LINK_FTP_INTERNO" ]]; then
+    echo "Link internal ftp required ( Param: -fi or--ftpinterno)"
+    exit 1;
+  fi
+
+  if [[ -z "$USER_FTP_EXTERNO" ]]; then
+    echo "User external ftp required ( Param: -ufe or--userftpexterno)"
+    exit 1;
+  fi
+
+  if [[ -z "$USER_FTP_INTERNO" ]]; then
+    echo "User internal ftp required ( Param: -ufi or--userftpinterno)"
+    exit 1;
+  fi
+
+  if [[ -z "$PASSWORD_FTP_EXTERNO" ]]; then
+    echo "Password external ftp required ( Param: -pfe or--pathexternalftp)"
+    exit 1;
+  fi
+
+  if [[ -z "$PASSWORD_FTP_INTERNO" ]]; then
+    echo "Password internal ftp required ( Param: -pfi or--passwordftpinterno)"
+    exit 1;
+  fi
+
+}
+
 function help() {
   echo "#################"
 
   echo "Options you can use:"
   echo "  -h   | --help : this help"
-  echo "  -fe  | --ftpexterno : external ftp link to connect"
-  echo "  -fi  | --ftpinterno : internal ftp link to connect"
-  echo "  -ufi | --userftpexterno : username external ftp "
-  echo "  -ufe | --userftpinterno : username internal ftp "
-  echo "  -pfe | --passwordftpexterno: password external ftp"
-  echo "  -pfi | --passwordftpinterno: password internal ftp"
-  echo "  -pef | --pathexternalftp: path external ftp. Default value: $PATH_EXTERNAL_FTP"
-  echo "  -pif | --pathinternalftp: path internal ftp. Default value: $PATH_INTERNAL_FTP"
+  echo "  -fe  | --ftpexterno : external ftp link to connect (required)"
+  echo "  -fi  | --ftpinterno : internal ftp link to connect (required)"
+  echo "  -ufe | --userftpexterno : username external ftp (required)"
+  echo "  -ufi | --userftpinterno : username internal ftp (required)"
+  echo "  -pfe | --passwordftpexterno: password external ftp (required)"
+  echo "  -pfi | --passwordftpinterno: password internal ftp (required)"
+  echo "  -pef | --pathexternalftp: path external ftp (optional). Default value: $PATH_EXTERNAL_FTP"
+  echo "  -pif | --pathinternalftp: path internal ftp (optional). Default value: $PATH_INTERNAL_FTP"
 
   echo "#################"
   exit 1
@@ -61,6 +94,7 @@ function help() {
 ## Main
 ##############
   parseValidArguments $@
+  validateArguments
 
   printf "\n Iniciando proceso\n"
      LISTADO_FTP_EXTERNO=$( curl $LINK_FTP_EXTERNO$PATH_EXTERNAL_FTP  --user $USER_FTP_EXTERNO:$PASSWORD_FTP_EXTERNO -ll)
