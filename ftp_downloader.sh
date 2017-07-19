@@ -7,6 +7,7 @@ USER_INTERNAL_FTP=
 PASSWORD_INTERNAL_FTP=
 PATH_EXTERNAL_FTP=''
 PATH_INTERNAL_FTP=''
+TIME_OUT_CURL=60
 
 FILE_EXTERNAL_LIST=list_external_ftp.dat
 FILE_INTERNAL_LIST=list_internal_ftp.dat
@@ -29,6 +30,8 @@ function parseValidArguments() {
       -pef|--pathexternalftp) PATH_EXTERNAL_FTP="$2"; shift
       ;;
       -pif|--pathinternalftp) PATH_INTERNAL_FTP="$2"; shift
+      ;;
+      -to|--timeout) TIME_OUT_CURL="$2"; shift
       ;;
       -h|--help) help
       ;;
@@ -70,12 +73,33 @@ function validateArguments(){
   fi
 }
 
-
 function downloadAndUploadFile(){
  line=$1
- echo "Trying to download file: $line"
- curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line
- curl -T   $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP
+ echo ""
+ echo "==========================="
+ log "INFO" "Start process File: $line "
+ echo ""
+ log "INFO" "Trying to download file: $line FROM $LINK_EXTERNAL_FTP"
+ if $(curl --fail $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line);then
+   echo ""
+   log "INFO" "File download: $line OK!"
+   log "INFO" "Trying to upload file: $line to ftp $LINK_INTERNAL_FTP"
+   echo ""
+
+   if $(curl --fail -T $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP);then
+     echo ""
+     log "INFO" "File upload : $line OK!"
+   else
+     log "ERROR" "Failed upoad file: $line"
+   fi
+
+ else
+   log "ERROR" "Failed download file: $line"
+ fi
+ echo ""
+ log "INFO" "End process File: $line "
+ echo "==========================="
+
  rm -f $line
 }
 
@@ -92,21 +116,37 @@ function help() {
   echo "  -pfi | --passwordftpinterno: password internal ftp (required)"
   echo "  -pef | --pathexternalftp: path external ftp (optional). Default value: $PATH_EXTERNAL_FTP"
   echo "  -pif | --pathinternalftp: path internal ftp (optional). Default value: $PATH_INTERNAL_FTP"
+  echo "  -to  | --timeout: time out per request(optional). Default value: $TIME_OUT_CURL"
 
   echo "#################"
   exit 1
 }
 
-#TODO loguear bien y extraer a funciones
+function log() {
+  echo "$(date +%Y-%m-%d'T'%H:%M:%S)" $@
+}
+
 ##############
 ## Main
 ##############
 parseValidArguments $@
 validateArguments
 
+
+
+log "INFO" "INFO PARAMS"
+log "INFO" "=================="
+log "INFO" "Link external ftp: $LINK_EXTERNAL_FTP"
+#log "INFO" "Username external ftp $USER_EXTERNAL_FTP"
+log "INFO" "Path external Ftp: $PATH_EXTERNAL_FTP"
+log "INFO" "Link internal ftp: $LINK_INTERNAL_FTP"
+#log "INFO" "Username internal ftp $USER_INTERNAL_FTP"
+log "INFO" "Path internaL Ftp: $PATH_INTERNAL_FTP"
+log "INFO" "=================="
+
 echo "###########"
-LISTADO_FTP_EXTERNO=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll)
-LISTADO_FTP_INTERNO=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP  --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll)
+LISTADO_FTP_EXTERNO=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll)
+LISTADO_FTP_INTERNO=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll)
 
 echo "$LISTADO_FTP_EXTERNO" >> "$FILE_EXTERNAL_LIST"
 echo "$LISTADO_FTP_INTERNO" >> "$FILE_INTERNAL_LIST"
@@ -117,7 +157,7 @@ do
   result=$(grep -c $line "$FILE_INTERNAL_LIST")
 
   if [ $result != "0" ];then
-    echo "The File: $line already exists"
+    log "INFO" "The File: $line already exists"
   else
     downloadAndUploadFile $line
   fi
