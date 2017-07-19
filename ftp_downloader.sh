@@ -132,8 +132,6 @@ function log() {
 parseValidArguments $@
 validateArguments
 
-
-
 log "INFO" "INFO PARAMS"
 log "INFO" "=================="
 log "INFO" "Link external ftp: $LINK_EXTERNAL_FTP"
@@ -151,13 +149,11 @@ LIST_INTERNAL_FTP=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout
 echo "$LIST_EXTERNAL_FTP" >> "$FILE_EXTERNAL_LIST"
 echo "$LIST_INTERNAL_FTP" >> "$FILE_INTERNAL_LIST"
 
-
 while IFS= read -r line
 do
   result=$(grep -c $line "$FILE_INTERNAL_LIST")
-
   if [ $result != "0" ];then
-    log "INFO" "The File: $line already exists"
+    log "INFO" "File: $line already exists"
   else
     downloadAndUploadFile $line
   fi
@@ -167,7 +163,6 @@ done <"$FILE_EXTERNAL_LIST"
 
 rm -f "$FILE_EXTERNAL_LIST"
 rm -f "$FILE_INTERNAL_LIST"
-
 
 ##############
 ## End Main
