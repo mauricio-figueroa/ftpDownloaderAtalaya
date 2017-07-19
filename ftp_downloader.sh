@@ -74,17 +74,17 @@ function validateArguments(){
 }
 
 function downloadAndUploadFile(){
- line=$1
- echo ""
- echo "==========================="
- log "INFO" "Start process File: $line "
- echo ""
- log "INFO" "Trying to download file: $line FROM $LINK_EXTERNAL_FTP"
- if $(curl --fail $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line);then
-   echo ""
-   log "INFO" "File download: $line OK!"
-   log "INFO" "Trying to upload file: $line to ftp $LINK_INTERNAL_FTP"
-   echo ""
+  line=$1
+  echo ""
+  echo "==========================="
+  log "INFO" "Start process File: $line "
+  echo ""
+  log "INFO" "Trying to download file: $line FROM $LINK_EXTERNAL_FTP"
+  if $(curl --fail $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line);then
+    echo ""
+    log "INFO" "File download: $line OK!"
+    log "INFO" "Trying to upload file: $line to ftp $LINK_INTERNAL_FTP"
+    echo ""
 
    if $(curl --fail -T $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP);then
      echo ""
@@ -93,14 +93,14 @@ function downloadAndUploadFile(){
      log "ERROR" "Failed upoad file: $line"
    fi
 
- else
+  else
    log "ERROR" "Failed download file: $line"
- fi
- echo ""
- log "INFO" "End process File: $line "
- echo "==========================="
+  fi
+  echo ""
+  log "INFO" "End process File: $line "
+  echo "==========================="
 
- rm -f $line
+  rm -f $line
 }
 
 function help() {
