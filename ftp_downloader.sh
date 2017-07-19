@@ -80,13 +80,13 @@ function downloadAndUploadFile(){
   log "INFO" "Start process File: $line "
   echo ""
   log "INFO" "Trying to download file: $line FROM $LINK_EXTERNAL_FTP"
-  if $(curl --fail $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line --silent);then
+  if $(curl --fail $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line );then
     echo ""
     log "INFO" "File download: $line OK!"
     log "INFO" "Trying to upload file: $line to ftp $LINK_INTERNAL_FTP"
     echo ""
 
-   if $(curl --fail -T $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP --silent);then
+   if $(curl --fail -T $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP );then
      echo ""
      log "INFO" "File upload : $line OK!"
    else
@@ -143,8 +143,8 @@ log "INFO" "Path internaL Ftp: $PATH_INTERNAL_FTP"
 log "INFO" "=================="
 
 echo "###########"
-LIST_EXTERNAL_FTP=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll --silent)
-LIST_INTERNAL_FTP=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll --silent)
+LIST_EXTERNAL_FTP=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll )
+LIST_INTERNAL_FTP=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll )
 
 echo "$LIST_EXTERNAL_FTP" >> "$FILE_EXTERNAL_LIST"
 echo "$LIST_INTERNAL_FTP" >> "$FILE_INTERNAL_LIST"
