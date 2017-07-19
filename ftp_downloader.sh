@@ -116,7 +116,7 @@ function help() {
   echo "  -pfi | --passwordftpinterno: password internal ftp (required)"
   echo "  -pef | --pathexternalftp: path external ftp (optional). Default value: $PATH_EXTERNAL_FTP"
   echo "  -pif | --pathinternalftp: path internal ftp (optional). Default value: $PATH_INTERNAL_FTP"
-  echo "  -to  | --timeout: time out per request(optional). Default value: $TIME_OUT_CURL"
+  echo "  -to  | --timeout: time out per request (optional). Default value: $TIME_OUT_CURL"
 
   echo "#################"
   exit 1
@@ -145,11 +145,11 @@ log "INFO" "Path internaL Ftp: $PATH_INTERNAL_FTP"
 log "INFO" "=================="
 
 echo "###########"
-LISTADO_FTP_EXTERNO=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll)
-LISTADO_FTP_INTERNO=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll)
+LIST_EXTERNAL_FTP=$( curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -ll)
+LIST_INTERNAL_FTP=$( curl $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --connect-timeout $TIME_OUT_CURL --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP -ll)
 
-echo "$LISTADO_FTP_EXTERNO" >> "$FILE_EXTERNAL_LIST"
-echo "$LISTADO_FTP_INTERNO" >> "$FILE_INTERNAL_LIST"
+echo "$LIST_EXTERNAL_FTP" >> "$FILE_EXTERNAL_LIST"
+echo "$LIST_INTERNAL_FTP" >> "$FILE_INTERNAL_LIST"
 
 
 while IFS= read -r line
