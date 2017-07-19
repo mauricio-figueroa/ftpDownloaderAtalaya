@@ -68,7 +68,15 @@ function validateArguments(){
     echo "Password internal ftp required ( Param: -pfi or--passwordftpinterno)"
     exit 1;
   fi
+}
 
+
+function downloadAndUploadFile(){
+ line=$1
+ echo "Trying to download file: $line"
+ curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line
+ curl -T   $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP
+ rm -f $line
 }
 
 function help() {
@@ -109,13 +117,11 @@ do
   result=$(grep -c $line "$FILE_INTERNAL_LIST")
 
   if [ $result != "0" ];then
-    echo "Ya existe el archivo: $line"
+    echo "The File: $line already exists"
   else
-    echo "Se va a descargar archivo: $line"
-    curl $LINK_EXTERNAL_FTP$PATH_EXTERNAL_FTP$line  --user $USER_EXTERNAL_FTP:$PASSWORD_EXTERNAL_FTP -o $line
-    curl -T   $line $LINK_INTERNAL_FTP$PATH_INTERNAL_FTP --user $USER_INTERNAL_FTP:$PASSWORD_INTERNAL_FTP
-    rm -f $line
+    downloadAndUploadFile $line
   fi
+  echo ""
 
 done <"$FILE_EXTERNAL_LIST"
 
