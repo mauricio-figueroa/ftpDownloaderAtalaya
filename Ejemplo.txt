@@ -1,0 +1,1 @@
+./ftp_downloader.sh -fe 'ftp://sftp.despegar.com/' -ufe 'worldpay' -pfe 'gj45Gxn7Df' -pef 'upload/' -fi 'ftp://10.254.22.99/' -ufi 'test' -pfi 'test'

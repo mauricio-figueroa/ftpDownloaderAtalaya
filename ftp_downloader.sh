@@ -1,5 +1,4 @@
 #!/bin/bash
-
 LINK_FTP_EXTERNO='ftp://sftp.despegar.com/upload/'
 LINK_FTP_INTERNO='ftp://10.254.22.99/'
 USER_FTP_EXTERNO=worldpay
@@ -9,10 +8,8 @@ PASSWORD_FTP_INTERNO=test
 PATH_EXTERNAL_FTP=''
 PATH_INTERNAL_FTP=''
 
-
 FILE_LISTADO_EXTERNO=listado_ftp_externo.dat
 FILE_LISTADO_INTERNO=listado_ftp_interno.dat
-
 
 function parseValidArguments() {
   while :; do
@@ -55,12 +52,11 @@ function help() {
   echo "  -pef | --pathexternalftp: path external ftp. Default value: $PATH_EXTERNAL_FTP"
   echo "  -pif | --pathinternalftp: path internal ftp. Default value: $PATH_INTERNAL_FTP"
 
-
   echo "#################"
   exit 1
 }
 
-
+#TODO loguear bien y extraer a funciones
 ##############
 ## Main
 ##############
@@ -79,16 +75,11 @@ function help() {
         result=$(grep -c $line "$FILE_LISTADO_INTERNO")
       if [ $result != "0" ]
         then
-            printf '\nYa existe el archivo\n'
-            printf '\n %s' "$line"
-
+            echo "Ya existe el archivo: $line"
         else
-          #	printf '\n %s' "$line"
-            printf '\nSe va a descargar archivo: \n'
-            echo "$line"
-            printf '\n'
-            curl $LINK_FTP_EXTERNO$PATH_EXTERNAL_FTP$line  --user worldpay:gj45Gxn7Df -o $line
-            curl -T   $line $LINK_FTP_INTERNO$PATH_INTERNAL_FTP --user test:test
+            echo "Se va a descargar archivo: $line"
+            curl $LINK_FTP_EXTERNO$PATH_EXTERNAL_FTP$line  --user $USER_FTP_EXTERNO:$PASSWORD_FTP_EXTERNO -o $line
+            curl -T   $line $LINK_FTP_INTERNO$PATH_INTERNAL_FTP --user $USER_FTP_INTERNO:$PASSWORD_FTP_INTERNO
             rm -f $line
         fi
 
@@ -96,5 +87,3 @@ function help() {
 
       rm -f "$FILE_LISTADO_EXTERNO"
       rm -f "$FILE_LISTADO_INTERNO"
-
-
